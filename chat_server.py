@@ -12,7 +12,8 @@ from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 
 
-IP = '127.0.0.1'
+IP = ''
+# IP = '127.0.0.1'
 PORT = 9999  # 端口
 BUFF = 1024
 
