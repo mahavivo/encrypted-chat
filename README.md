@@ -1,1 +1,1 @@
-encrypted socket chat software written in Python
+encrypted socket chat programme written in Python
