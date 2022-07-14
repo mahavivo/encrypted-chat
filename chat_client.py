@@ -22,15 +22,15 @@ IP = ''
 PORT = ''
 BUFF = 1024
 
-key = get_random_bytes(16)
-# key = 'keyskeyskeyskeys' # 使用字符串要加.encode('utf-8')
+key = get_random_bytes(32)
+# key = 'keyskeyskeyskeyskeyskeyskeyskeys' # 使用字符串要加.encode('utf-8')
 mode = AES.MODE_CBC
 iv = Random.new().read(AES.block_size)
 # iv = b'\xd5\x0f\xaa\x8dn\x8a(\xd3\xdcj\x19q\xf0\x01\x93\x10'
 
 t = 0.2
 user = ''
-listbox_users = ''  # 用于显示在线用户的列表框
+listbox_users = ''  # 显示在线用户的列表框
 users = []  # 在线用户列表
 chat_obj = '--Group chat'  # 聊天对象
 
@@ -43,7 +43,7 @@ def encrypt(text):
     cryptor = AES.new(key, mode, iv)
     # 这里密钥key 长度必须为16（AES-128）,
     # 24（AES-192）,或者32 （AES-256）Bytes 长度
-    # 目前AES-128 足够目前使用
+    # 通常AES-128 足够使用
     length = 16
     count = len(text)
     if count < length:
@@ -142,7 +142,7 @@ s.send(cipher_iv)
 # 发送用户名
 if user:
     time.sleep(t)
-    s.send(encrypt(user))  # 发送用户名
+    s.send(encrypt(user))
 else:
     s.send(encrypt('用户名不存在'))
     user = IP + ':' + PORT

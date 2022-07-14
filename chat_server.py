@@ -12,9 +12,9 @@ from Crypto.Cipher import AES
 from binascii import b2a_hex, a2b_hex
 
 
-IP = ''
-# IP = '127.0.0.1'
-PORT = 9999  # 端口
+# IP = ''
+IP = '127.0.0.1'
+PORT = 8080  # 端口
 BUFF = 1024
 
 # key = ''
@@ -35,7 +35,7 @@ def encrypt(text, key, iv):
     cryptor = AES.new(key, mode, iv)
     # 这里密钥key 长度必须为16（AES-128）,
     # 24（AES-192）,或者32 （AES-256）Bytes 长度
-    # 目前AES-128 足够目前使用
+    # 通常AES-128 足够使用
     length = 16
     count = len(text)
     if count < length:
@@ -67,7 +67,8 @@ def user_counter():
     return onlines
 
 
-# 接受来自客户端的用户名，如果用户名为空，使用用户的IP与端口作为用户名。如果用户名出现重复，则在出现的用户名依此加上后缀“2”、“3”、“4”……
+# 接受来自客户端的用户名，如果用户名为空，使用用户的IP与端口作为用户名
+# 如果用户名出现重复，则在用户名依此加上后缀“2”、“3”、“4”……
 def recv_msg(conn, addr):  # 接收消息
 
     conn_data = conn.recv(BUFF)
@@ -106,7 +107,7 @@ def recv_msg(conn, addr):  # 接收消息
             user = addr[0] + ':' + str(addr[1])
         tag = 1
         temp = user
-        for i in range(len(users)):  # 检验重名，则在重名用户后加数字
+        for i in range(len(users)):  # 检验重名，如果重名则在用户名后加数字
             if users[i][0] == user:
                 tag = tag + 1
                 user = temp + str(tag)
@@ -116,14 +117,14 @@ def recv_msg(conn, addr):  # 接收消息
         # print(users_online)
         load_queue(users_online, addr)
 
-        # 在获取用户名后便会不断地接受用户端发来的消息（即聊天内容），结束后关闭连接。
+        # 在获取用户名后便会不断地接受用户端发来的消息（即聊天内容），结束后关闭连接
         try:
             while True:
                 message = conn.recv(BUFF)  # 发送消息
                 message = decrypt(message, key, iv)
                 message = user + ': ' + message
                 load_queue(message, addr)
-        # 如果用户断开连接，将该用户从用户列表中删除，然后更新用户列表。
+        # 如果用户断开连接，将该用户从用户列表中删除，然后更新用户列表
         except:
             j = 0  # 用户断开连接
             for man in users:
@@ -136,7 +137,7 @@ def recv_msg(conn, addr):  # 接收消息
             load_queue(users_online, addr)
             conn.close()
 
-# 将地址与数据（需发送给客户端）存入messages队列。
+# 将地址与数据（需发送给客户端）存入messages队列
 def load_queue(data, addr):
     lock.acquire()
     try:
@@ -144,7 +145,7 @@ def load_queue(data, addr):
     finally:
         lock.release()
 
-# 服务端在接受到数据后，会对其进行一些处理然后发送给客户端，如下图，对于聊天内容，服务端直接发送给客户端，而对于用户列表，便由json.dumps处理后发送。
+# 服务端在接受到数据后，会对其进行一些处理然后发送给客户端，对于聊天内容，服务端直接发送给客户端，而对于用户列表，便由json.dumps处理后发送。
 def send_data():  # 发送数据
     while True:
         if not messages.empty():
