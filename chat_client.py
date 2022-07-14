@@ -42,8 +42,7 @@ def encrypt(text):
 
     cryptor = AES.new(key, mode, iv)
     # 这里密钥key 长度必须为16（AES-128）,
-    # 24（AES-192）,或者32 （AES-256）Bytes 长度
-    # 通常AES-128 足够使用
+    # 24（AES-192）,或者32（AES-256）Bytes 长度
     length = 16
     count = len(text)
     if count < length:
